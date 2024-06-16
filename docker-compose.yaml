@@ -1,0 +1,40 @@
+version: '3.7'
+
+services:
+  public:
+    container_name: public_api
+    build: ./
+    depends_on:
+      - db
+    volumes:
+      - ./app:/public_api/app
+    environment:
+      - .env
+    ports:
+      - "8000:80"
+
+  private:
+    container_name: private_api
+    build: ./
+    depends_on:
+      - db
+    volumes:
+      - ./app:/private_api/app
+    environment:
+      - .env
+    ports:
+      - "9000:80"
+
+  db:
+      image: postgres:15-alpine
+      volumes:
+        - postgres_data:/var/lib/postgresql/data/
+      expose:
+        - 5434:5432
+      environment:
+        - POSTGRES_USER=${DB_USER}
+        - POSTGRES_PASSWORD=${DB_PASS}
+        - POSTGRES_DB=memes
+
+volumes:
+      postgres_data:
